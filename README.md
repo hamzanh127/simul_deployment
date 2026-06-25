@@ -183,6 +183,38 @@ Ctrl + C
 
 Le script intercepte l'arret clavier et affiche un message de fin propre.
 
+## Benchmark des modes de deploiement et de test
+
+Ce tableau compare les principales manieres de lancer, tester ou demontrer le
+projet. Il ne mesure pas seulement la performance brute : il sert surtout de
+benchmark pedagogique pour comprendre quel mode utiliser selon le besoin.
+
+| Mode | Commande / outil | Usage principal | Avantages | Limites | Cas MLOps typique |
+| --- | --- | --- | --- | --- | --- |
+| Local Uvicorn | `uvicorn app.main:app --host 127.0.0.1 --port 8001 --reload` | Developpement rapide de l'API | Simple, rapide, logs directs, reload automatique | Depend de l'environnement local | Tester vite un changement de node, schema ou endpoint |
+| Swagger | `http://localhost:8001/docs` | Test manuel des endpoints | Interface automatique, aucun outil externe, tres lisible pour une demo | Pas ideal pour les tests repetes ou automatises | Demonstration pedagogique des contrats API |
+| Postman | Application Postman | Test manuel avance | Collections, historique, headers, environnements | Necessite un outil externe | Validation fonctionnelle avant livraison |
+| GUI Tkinter | `python gui.py` | Demo graphique de l'agent | Interface claire, historique, logs, resultats formates | Depend de l'API deja lancee | Presenter l'agent a un utilisateur non technique |
+| Streaming massif | `python streaming_mass_test.py` | Simulation d'un flux continu | Envoi automatique toutes les 3 secondes, test periodique, utile pour observer le comportement | Boucle simple, pas de parallelisme, pas de stockage long terme | Simuler des incidents de monitoring en continu |
+| Docker Build | `docker build -t tp_langgraph_deployment .` | Construction d'une image deployable | Image reproductible, portable, versionnable | Ne lance pas plusieurs services tout seul | Preparer une image pour CI/CD ou registry |
+| Docker Compose | `docker compose up --build` | Lancement containerise de l'API | Commande unique, charge `.env`, expose le port, proche du deploiement | Necessite Docker et un fichier `.env` valide | Lancer l'agent dans un environnement controle |
+| Event-Driven | `POST /event` via webhook | Declenchement automatique | Reagit a GitHub ou a un systeme externe, proche production | Necessite un emetteur d'evenements | Analyser automatiquement un push, une alerte ou un signal monitoring |
+
+### Lecture rapide du benchmark
+
+Pour developper rapidement, utiliser le mode local avec Uvicorn.
+
+Pour expliquer l'API, utiliser Swagger.
+
+Pour faire une demonstration visuelle, utiliser le GUI Tkinter.
+
+Pour simuler un flux continu d'incidents, utiliser le test streaming massif.
+
+Pour preparer un deploiement reproductible, utiliser Docker puis Docker Compose.
+
+Pour se rapprocher d'un fonctionnement MLOps de production, utiliser le mode
+event-driven avec un webhook.
+
 ## Deploiement avec Docker
 
 Le projet est pret a etre lance dans un container Docker.
