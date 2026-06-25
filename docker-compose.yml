@@ -1,0 +1,78 @@
+# -----------------------------------------------------------------------------
+# Docker Compose du projet tp_langgraph_deployment
+# -----------------------------------------------------------------------------
+# Docker Compose permet de lancer une application composee d'un ou plusieurs
+# services avec une seule commande.
+#
+# Dans ce projet, on a pour l'instant un seul service :
+# - `api` : l'application FastAPI qui expose les endpoints HTTP.
+#
+# Plus tard, on pourrait ajouter :
+# - une base de donnees ;
+# - un cache Redis ;
+# - un worker ;
+# - un systeme de monitoring ;
+# - une file de messages.
+
+services:
+  # ---------------------------------------------------------------------------
+  # Service API
+  # ---------------------------------------------------------------------------
+  # `api` est le nom logique du service.
+  #
+  # On pourra l'utiliser dans les logs :
+  #
+  #     docker compose logs api
+  api:
+    # -------------------------------------------------------------------------
+    # Construction de l'image
+    # -------------------------------------------------------------------------
+    # `build: .` indique que Docker Compose doit construire l'image a partir du
+    # Dockerfile present dans le dossier courant.
+    build: .
+
+    # -------------------------------------------------------------------------
+    # Nom du container
+    # -------------------------------------------------------------------------
+    # `container_name` donne un nom lisible au container.
+    #
+    # Sans cette option, Docker Compose genere un nom automatiquement.
+    container_name: tp_langgraph_deployment_api
+
+    # -------------------------------------------------------------------------
+    # Variables d'environnement
+    # -------------------------------------------------------------------------
+    # `env_file: .env` charge les variables du fichier `.env` dans le container.
+    #
+    # Ce fichier doit contenir par exemple :
+    #
+    # GROQ_API_KEY=your_real_groq_api_key_here
+    # GROQ_MODEL=llama-3.1-8b-instant
+    #
+    # Important :
+    # `.env` ne doit jamais etre versionne dans Git.
+    env_file:
+      - .env
+
+    # -------------------------------------------------------------------------
+    # Mapping des ports
+    # -------------------------------------------------------------------------
+    # "8000:8000" signifie :
+    #
+    # - port 8000 sur la machine locale ;
+    # - port 8000 dans le container.
+    #
+    # Grace a ce mapping, on peut ouvrir :
+    #
+    #     http://localhost:8000
+    ports:
+      - "8001:8001"
+
+    # -------------------------------------------------------------------------
+    # Politique de redemarrage
+    # -------------------------------------------------------------------------
+    # `unless-stopped` relance le container s'il s'arrete de maniere inattendue,
+    # sauf si l'utilisateur l'a arrete volontairement.
+    #
+    # C'est utile pour un deploiement simple.
+    restart: unless-stopped

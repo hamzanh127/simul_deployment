@@ -1,0 +1,30 @@
+# Dependances Python du projet.
+#
+# Chaque ligne correspond a une bibliotheque installee avec pip.
+# Les versions ne sont pas encore figees afin de garder le TP simple au depart.
+# Dans un projet de production, on pourra ensuite verrouiller les versions pour
+# garantir des installations reproductibles.
+
+# Framework web utilise pour construire l'API HTTP.
+fastapi
+
+# Serveur ASGI utilise pour lancer une application FastAPI en local ou en prod.
+uvicorn
+
+# Bibliotheque permettant de creer des workflows sous forme de graphes.
+langgraph
+
+# Bibliotheque de base pour construire des applications avec des LLM.
+langchain
+
+# Integration LangChain pour utiliser les modeles exposes par Groq.
+langchain-groq
+
+# Chargement des variables d'environnement depuis un fichier .env.
+python-dotenv
+
+# Validation et structuration des donnees Python.
+pydantic
+
+# Framework de tests automatise.
+pytest

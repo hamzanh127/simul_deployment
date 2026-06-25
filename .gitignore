@@ -1,0 +1,44 @@
+# Environnements virtuels Python
+.venv/
+venv/
+env/
+
+# Caches Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Fichiers d'environnement locaux
+.env
+.env.*
+!.env.example
+
+# Caches et rapports de tests
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Fichiers generes par les IDE et editeurs
+.vscode/
+.idea/
+
+# Fichiers systeme
+.DS_Store
+Thumbs.db
+
+# Artefacts de build Python
+build/
+dist/
+*.egg-info/
+
+# Fichiers Docker locaux et temporaires
+*.tar
+docker-compose.override.yml
+
+# Logs locaux
+*.log
+logs/
+
+# Fichiers temporaires
+tmp/
+temp/
