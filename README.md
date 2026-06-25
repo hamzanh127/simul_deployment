@@ -194,6 +194,8 @@ benchmark pedagogique pour comprendre quel mode utiliser selon le besoin.
 | Local Uvicorn | `uvicorn app.main:app --host 127.0.0.1 --port 8001 --reload` | Developpement rapide de l'API | Simple, rapide, logs directs, reload automatique | Depend de l'environnement local | Tester vite un changement de node, schema ou endpoint |
 | Swagger | `http://localhost:8001/docs` | Test manuel des endpoints | Interface automatique, aucun outil externe, tres lisible pour une demo | Pas ideal pour les tests repetes ou automatises | Demonstration pedagogique des contrats API |
 | Postman | Application Postman | Test manuel avance | Collections, historique, headers, environnements | Necessite un outil externe | Validation fonctionnelle avant livraison |
+| Real-Time | `POST /realtime` | Analyse immediate d'un seul incident | Reponse directe, simple a comprendre, ideal pour tester un cas precis | Traite un seul incident par appel | Analyser rapidement une alerte ou un incident utilisateur |
+| Batch | `POST /batch` | Analyse de plusieurs incidents en une requete | Reduit le nombre d'appels API, pratique pour traiter une liste | Chaque incident reste traite sequentiellement dans ce TP | Analyser un lot d'alertes ou un export de tickets |
 | GUI Tkinter | `python gui.py` | Demo graphique de l'agent | Interface claire, historique, logs, resultats formates | Depend de l'API deja lancee | Presenter l'agent a un utilisateur non technique |
 | Streaming massif | `python streaming_mass_test.py` | Simulation d'un flux continu | Envoi automatique toutes les 3 secondes, test periodique, utile pour observer le comportement | Boucle simple, pas de parallelisme, pas de stockage long terme | Simuler des incidents de monitoring en continu |
 | Docker Build | `docker build -t tp_langgraph_deployment .` | Construction d'une image deployable | Image reproductible, portable, versionnable | Ne lance pas plusieurs services tout seul | Preparer une image pour CI/CD ou registry |
@@ -205,6 +207,10 @@ benchmark pedagogique pour comprendre quel mode utiliser selon le besoin.
 Pour developper rapidement, utiliser le mode local avec Uvicorn.
 
 Pour expliquer l'API, utiliser Swagger.
+
+Pour analyser un seul incident precis, utiliser le mode Real-Time.
+
+Pour analyser plusieurs incidents dans une seule requete, utiliser le mode Batch.
 
 Pour faire une demonstration visuelle, utiliser le GUI Tkinter.
 
