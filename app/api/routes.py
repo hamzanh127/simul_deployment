@@ -798,21 +798,25 @@ async def event_driven(request: Request) -> dict[str, object]:
 # Exemple de request :
 #
 # {
-#   "title": "Erreur 500 sur l'API",
-#   "description": "La creation de compte retourne une erreur serveur.",
-#   "severity": "critical",
-#   "source": "monitoring"
+#   "text": "Le deploiement Kubernetes echoue."
 # }
 @router.post("/streaming")
-def stream_incident_analysis(request: IncidentRequest) -> StreamingResponse:
+async def stream_incident_analysis(request: Request) -> StreamingResponse:
     """
     Analyse un incident en mode streaming avec LangGraph.
 
     Parametre :
         request:
-            Incident envoye par le client.
+            Requete HTTP brute recue par FastAPI.
 
-            Comme pour `/realtime`, on utilise `IncidentRequest`.
+            Contrairement a `/realtime`, ce endpoint accepte un JSON simple :
+
+            {
+              "text": "Le deploiement Kubernetes echoue."
+            }
+
+            Cela rend le test streaming plus pratique, notamment avec
+            `streaming_mass_test.py`.
 
     Retour :
         Une `StreamingResponse`.
@@ -836,12 +840,26 @@ def stream_incident_analysis(request: IncidentRequest) -> StreamingResponse:
     # -------------------------------------------------------------------------
     # 1. Transformation de la Request en State initial
     # -------------------------------------------------------------------------
-    # Le client envoie un JSON valide par Pydantic.
+    # Le client envoie un JSON simple.
     #
+    # Exemple attendu :
+    #
+    # {
+    #   "text": "Le deploiement Kubernetes echoue."
+    # }
+    #
+    # On lit le body avec `await request.json()` car la fonction est async et
+    # parce que nous acceptons ici un payload brut, pas un modele Pydantic.
+    payload = await request.json()
+
     # LangGraph attend un dictionnaire de State.
     #
-    # On transforme donc l'objet `IncidentRequest` en dictionnaire.
-    initial_state = request.model_dump()
+    # Pour rester compatible avec le node event-driven, on transforme `text` en
+    # cle `incident`.
+    #
+    # Si le client envoie deja un champ `incident`, on le garde.
+    incident_text = str(payload.get("text", payload.get("incident", payload)))
+    initial_state = {"incident": incident_text}
 
     # -------------------------------------------------------------------------
     # 2. Definition d'un generateur Python

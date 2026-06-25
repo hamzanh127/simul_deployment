@@ -28,3 +28,6 @@ pydantic
 
 # Framework de tests automatise.
 pytest
+
+# Client HTTP utilise par l'interface Tkinter pour appeler l'API FastAPI.
+requests

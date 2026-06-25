@@ -72,6 +72,117 @@ Une fois le serveur lance :
 - la route `POST /streaming` renvoie les events LangGraph progressivement ;
 - Swagger est disponible sur `http://localhost:8001/docs`.
 
+## Lancer l'interface Desktop Tkinter
+
+Le fichier `gui.py` fournit une interface graphique pour tester l'agent sans
+modifier l'API FastAPI.
+
+Commande :
+
+```bash
+python gui.py
+```
+
+L'interface permet de tester :
+- `POST /realtime` ;
+- `POST /batch` ;
+- `POST /event` ;
+- `POST /streaming`.
+
+Par defaut, le GUI appelle :
+
+```text
+http://127.0.0.1:8001
+```
+
+L'URL peut etre modifiee directement dans l'interface.
+
+Fonctionnalites principales :
+- chargement automatique d'exemples ;
+- affichage du status HTTP ;
+- mesure du temps de reponse ;
+- resultat JSON formate ;
+- copie du resultat ;
+- sauvegarde en `.json` ;
+- historique des 20 derniers appels ;
+- logs de connexion, erreurs et reponses ;
+- verification automatique de l'API toutes les 5 secondes ;
+- visualisation de `langgraph_workflow.png` si l'image existe.
+
+## Test Streaming Massif
+
+Le fichier `streaming_mass_test.py` simule un flux continu d'incidents vers
+l'endpoint `POST /streaming`.
+
+Objectif :
+- envoyer automatiquement un incident toutes les 3 secondes ;
+- simuler un flux MLOps / DevOps continu ;
+- lire les events streaming renvoyes par LangGraph ;
+- afficher le status HTTP, l'heure d'envoi et la reponse JSON formatee ;
+- arreter proprement le test avec `Ctrl + C`.
+
+### 1. Lancer l'API
+
+Le script utilise par defaut :
+
+```text
+http://127.0.0.1:8001/streaming
+```
+
+Lancer donc l'API sur le port 8001 :
+
+```bash
+uvicorn app.main:app --host 127.0.0.1 --port 8001 --reload
+```
+
+### 2. Lancer le script de test massif
+
+Dans un autre terminal :
+
+```bash
+python streaming_mass_test.py
+```
+
+Le script envoie des payloads au format :
+
+```json
+{
+  "text": "Le deploiement Kubernetes echoue."
+}
+```
+
+Important :
+Le endpoint `POST /streaming` accepte maintenant ce format simple avec le champ
+`text`. Le script transforme chaque incident en body JSON de ce type avant de
+l'envoyer a l'API.
+
+Frequence d'envoi :
+
+```text
+1 incident toutes les 3 secondes
+```
+
+Exemples d'incidents envoyes :
+- PostgreSQL indisponible ;
+- erreur HTTP 500 ;
+- deploiement Kubernetes en echec ;
+- latence elevee du modele d'inference ;
+- derive de donnees ;
+- Redis indisponible ;
+- pipeline CI/CD en erreur.
+
+### 3. Arreter le test
+
+Le script tourne en boucle infinie.
+
+Pour l'arreter proprement :
+
+```text
+Ctrl + C
+```
+
+Le script intercepte l'arret clavier et affiche un message de fin propre.
+
 ## Deploiement avec Docker
 
 Le projet est pret a etre lance dans un container Docker.
@@ -481,12 +592,20 @@ Exemple de requete :
 
 ```json
 {
-  "title": "Erreur 500 sur l'API",
-  "description": "La creation de compte retourne une erreur serveur.",
-  "severity": "critical",
-  "source": "monitoring"
+  "text": "Le deploiement Kubernetes echoue."
 }
 ```
+
+Ce format est volontairement simple pour les tests de streaming continu.
+L'endpoint lit le champ `text`, le transforme en State LangGraph sous la forme :
+
+```json
+{
+  "incident": "Le deploiement Kubernetes echoue."
+}
+```
+
+Puis le graphe est execute avec `graph.stream()`.
 
 Exemple de flux de reponse :
 
